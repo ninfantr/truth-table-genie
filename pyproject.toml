@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "truth_table_genie"
+version = "0.0.1"
+authors = [
+{ name="Navin infant raj", email="navin.infant.raj@intel.com" }
+]
+description = "VLSI designer tool to solve complex truth table"
+readme = "README.md"
+requires-python = ">=3.6"
+classifiers = [
+"Programming Language :: Python :: 3",
+"License :: OSI Approved :: Intel License",
+"Operating System :: OS Independent",
+]
+[project.urls]
+Homepage = "https://github.com/ninfantr/truth-table-genie"
+Issues = "https://github.com/ninfantr/truth-table-genie/issues"
