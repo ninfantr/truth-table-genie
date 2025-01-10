@@ -1,6 +1,9 @@
+#!/usr/intel/bin/python3.6.3a
 import UsrIntel.R1
 import os, sys
 sys.path.append("../src/")
-from digital_designer_genie import ttg
-ttg.elaborate("files/dataset.xlsx", sheet_name="Sheet1", output_file="out/elaborated_1.xlsx")
-ttg.elaborate("files/dataset.xlsx", sheet_name="Sheet2", output_file="out/elaborated_2.xlsx",support_enum=True)
+
+from val_ai import ttg
+#generate output_file
+ttg.elaborate("files/dataset.xlsx")
+ttg.elaborate("files/dataset.xlsx", sheet_name="Sheet2", output_file="output/dataset_enum.xlsx", support_enum=True)

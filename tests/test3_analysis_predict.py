@@ -6,4 +6,4 @@ sys.path.append("../src/")
 
 from val_ai import ttg
 
-ttg.analysis_elab("files/dataset.xlsx")
+ttg.analysis_elab("files/dataset.xlsx", do_predict_misses=True)
