@@ -1,1 +1,1 @@
-# truth-table-genie
+# val-ai
