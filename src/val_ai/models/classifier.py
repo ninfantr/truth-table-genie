@@ -22,6 +22,8 @@ from sklearn.model_selection import cross_val_score
 
 import pickle
 
+from val_ai.ops.df_utils import *
+
 def prepare_dataset(df,Features, col ):
     print(f"Columns = {df.dtypes}")
     print(f"FEATURES = {Features}")
@@ -48,24 +50,31 @@ def train(X_train,Y_train, feature_names, target_names, model_path, model_name="
         pickle.dump(model, open(model_path, 'wb'))
     return model
 
-def test(model, X_train, Y_train, X_test, Y_test, X, Y):
+def test(model, X_train, Y_train, X_test, Y_test, X, Y,dump_file=None):
     Targets = list(model.classes_)
-    print("*"*5, "TESTING REPORT","*"*5)
-    print("TRAINING SCORE = ", model.score(X_train,Y_train))
-    print("TESTING SCORE = ", model.score(X_test,Y_test))
-    #print("CROSS VALIDATION (3 FOLD) = ", cross_val_score(model, X , Y,cv=2))
+    doc_lines = []
+    doc_lines.append("*"*5 +  "TESTING REPORT" +"*"*5)
+    doc_lines.append(f"TRAINING SCORE = {model.score(X_train,Y_train)}")
+    doc_lines.append(f"TESTING SCORE =  {model.score(X_test,Y_test)}")
+    #doc_lines.append("CROSS VALIDATION (3 FOLD) = ", cross_val_score(model, X , Y,cv=2))
     Y_pred = model.predict(X_train)
     report = classification_report(Y_train, Y_pred, target_names=Targets)
-    print("CLASSIFICATION REPORT ON TRAIN ")
-    print(report)
+    doc_lines.append("\nCLASSIFICATION REPORT ON TRAIN ")
+    doc_lines.append(report)
     Y_pred = model.predict(X_test)
     report = classification_report(Y_test, Y_pred, target_names=Targets)
-    print("CLASSIFICATION REPORT ON TEST ")
-    print(report)
+    doc_lines.append("\nCLASSIFICATION REPORT ON TEST ")
+    doc_lines.append(report)
     Y_pred = model.predict(X)
     report = classification_report(Y, Y_pred, target_names=Targets)
-    print("CLASSIFICATION REPORT ON COMPLETE DATASET")
-    print(report)
+    doc_lines.append("\nCLASSIFICATION REPORT ON COMPLETE DATASET")
+    doc_lines.append(report)
+    print("\n".join(doc_lines))
+    if dump_file:
+        f = open(dump_file,"w")
+        for line in doc_lines:
+            f.write(line+"\n")
+        f.close()
 
 def derive_probabilites_map(Targets,Y_proba):
     Probabilities = []
@@ -123,7 +132,7 @@ def derive_probabilites_map(Targets,Y_proba):
 #     out_df.to_excel(out_file,index=False)
 #     print(f"{out_file} generated.")
 
-def predict(model_path, df,out_file, features, col,sort_out=False ) :
+def predict(model_path, df,out_file, features, col,sort=False ) :
     model = pickle.load(open(model_path, 'rb'))
     Targets= model.classes_
     out_df = df.copy()
@@ -156,5 +165,5 @@ def predict(model_path, df,out_file, features, col,sort_out=False ) :
     # out_df.loc[:,f"Predicted {col} Probabilties"] = Probabilities
     # out_df['RESULTS'] = np.where((out_df[col] == out_df[f'Predicted {col}']), True, False)
 
-    out_df.to_csv(out_file,index=False)
+    dump_df(out_df,out_file,sort=sort)
     print(f"predict - {out_file} predicted.")

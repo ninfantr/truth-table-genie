@@ -107,3 +107,62 @@ def generate_all_combination(Features, dict_valid_values=None,output_file=None,e
 #             #     break
 #         # print("----------------------")
 #     cross_scenarios.extend(scenarios)
+
+def identify_feature_columns(df,subset=None):
+    # identifying features
+    if subset is None:
+        #consider only last column as output
+        features = list(df.columns)[:-1]
+    else:
+        features = subset
+    return features
+
+def identify_target_column(df,target=None):
+    if target is None:
+        target = list(df.columns)[-1]
+    else:
+        target = target
+    return target
+
+def calculate_logic_index(df,subset=None, support_enum=False,sort=False):
+    #assign logic_val
+    features = identify_feature_columns(df,subset)
+    if support_enum:
+        #TODO
+        def find_logic_val(row) :
+            return int(''.join(row.values.astype(str)),2)
+    else:
+        def find_logic_val(row) :
+            return int(''.join(row.values.astype(str)),2)
+    df['_logic_index'] = df[features].apply(lambda row: find_logic_val(row) , axis=1)
+    if sort:
+        df = df.sort_values(by=['_logic_index'])
+    return df['_logic_index']
+
+def dump_df(df,filename="",writer=None, sheet_name='Sheet1', subset=None,sort=False):
+    #sorting file
+    if sort:
+        features = identify_feature_columns(df,subset)
+        other_cols = [ c for c in df.columns if c not in features]
+        features = sorted(features)
+        df1 = df[features]
+        df2 = df[other_cols]
+        sorted_df = pd.concat([df1, df2], axis=1)
+        calculate_logic_index(sorted_df,sort=True)
+        # print(df)
+        df=sorted_df.drop(["_logic_index"],axis=1)
+        # print(df)
+        # print("-----------")
+    
+    if filename and isinstance(filename,str):
+        if filename.endswith("csv"):
+            df.to_csv(filename,index=False)
+        elif filename.endswith(".xlsx"):
+            df.to_excel(filename,sheet_name=sheet_name,index=False)
+    elif writer is not None:
+        #it is a excelWriter
+        df.to_excel(writer,sheet_name=sheet_name,index=False)
+    else:
+        raise Exception("invalid options. Please check the options to dump_file")
+    return
+
