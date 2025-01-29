@@ -1,9 +1,15 @@
-#!/usr/intel/bin/python3.6.3a
-import UsrIntel.R1
-import os, sys
+import os,sys
+import platform
+
+print(f"PLATFORM : {platform.platform()}")
+if platform.platform() == "Linux":
+    print("running in EC_LINUX")
+    import UsrIntel.R1
+elif platform.platform() == "Windows":
+    print("running in WINDOWS")
 sys.path.append("../src/")
 
-import val_ai
+from val_ai import ttg
 
 from val_ai.ops.df_utils import *
 

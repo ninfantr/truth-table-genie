@@ -16,7 +16,7 @@ def ml_model_explain(model_path,output_dir,convert_pdf=False):
     model_name = model.model_name
     if model_name == "decision_tree":
         print(f"model_explain - {vars(model)}")
-        output_file=f"{output_dir}/{model_name}_{int(time.time())}.jpg"
+        output_file=f"{output_dir}/{model_name}.jpg"
         dot_data = tree.export_graphviz(model, out_file=output_file, 
                         feature_names=model.feature_names,  
                         class_names=model.classes_,  
@@ -30,8 +30,10 @@ def ml_model_explain(model_path,output_dir,convert_pdf=False):
             os.system(f"convert {jpg_file} -auto-orient {pdf_file}")
             print(f"model_explain - convert {pdf_file}")
     elif model_name == "neural_network":
+        #TODO: generate image for neural network
         pass
     elif model_name =="random_forest":
+        #TODO: generate image for random forest
         pass
         
 
@@ -62,5 +64,4 @@ if __name__ == "__main__":
     #os.system("convert *.jpg -auto-orient document.pdf")
  
     graph = graphviz.Source(dot_data) 
-    # graph.render("MCA classification") 
-    
+    # graph.render("MCA classification")

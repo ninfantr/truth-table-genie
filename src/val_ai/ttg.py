@@ -4,6 +4,7 @@ import numpy as np
 import os,sys
 import time
 
+
 from val_ai.ops.df_utils import *
 from val_ai.models.classifier import *
 from val_ai.models.explainability import *
@@ -146,6 +147,7 @@ def predict_misses(input_file, sheet_name="Sheet1", output_dir="output", output_
     else:
         df = pd.read_excel(input_file, sheet_name=sheet_name)
     
+    
     Features = identify_feature_columns(df,subset)
     TargetColumn = identify_target_column(df,target=predict_col)
 
@@ -170,6 +172,10 @@ def predict_misses(input_file, sheet_name="Sheet1", output_dir="output", output_
         Targets = train_df[TargetColumn].unique()
         train_df[TargetColumn].dropna()
         print("predict_misses - Training ....")
+        if df.shape[0] == 0:
+            print(f"predict_misses - CANNOT TRAIN. No valid combination in {input_file}.")
+            print(f"predict_misses - SKIPPING Model creation ")
+            return
         X, Y = prepare_dataset(train_df,Features = Features, col=TargetColumn)
         if train_ratio is not None:
             X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.3, random_state=100)
@@ -190,4 +196,8 @@ def predict_misses(input_file, sheet_name="Sheet1", output_dir="output", output_
     if process_predict:
         df[TargetColumn] = ""
         output_file = generate_out_filename(input_file, output_dir=output_dir,output_file=output_file, extension="csv")
+        if df.shape[0] == 0:
+            print(f"predict_misses - no row entry {input_file}.")
+            print(f"predict_misses - SKIPPING {output_file} generation. ")
+            return
         predict(load_model, df,output_file, features= Features, col=TargetColumn,sort=sort)

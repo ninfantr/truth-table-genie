@@ -142,17 +142,20 @@ def calculate_logic_index(df,subset=None, support_enum=False,sort=False):
 def dump_df(df,filename="",writer=None, sheet_name='Sheet1', subset=None,sort=False):
     #sorting file
     if sort:
-        features = identify_feature_columns(df,subset)
-        other_cols = [ c for c in df.columns if c not in features]
-        features = sorted(features)
-        df1 = df[features]
-        df2 = df[other_cols]
-        sorted_df = pd.concat([df1, df2], axis=1)
-        calculate_logic_index(sorted_df,sort=True)
-        # print(df)
-        df=sorted_df.drop(["_logic_index"],axis=1)
-        # print(df)
-        # print("-----------")
+        sorted_df = df.copy()
+        if isinstance(sort,tuple) and sort[1] == True:  #sort_y
+            features = identify_feature_columns(df,subset)
+            other_cols = [ c for c in df.columns if c not in features]
+            features = sorted(features)
+            df1 = df[features]
+            df2 = df[other_cols]
+            sorted_df = pd.concat([df1, df2], axis=1)
+        if isinstance(sort,tuple) and sort[0] == True: # sort_x
+            calculate_logic_index(sorted_df,sort=True)
+            # print(df)
+            df=sorted_df.drop(["_logic_index"],axis=1)
+            # print(df)
+            # print("-----------")
     
     if filename and isinstance(filename,str):
         if filename.endswith("csv"):
@@ -166,3 +169,12 @@ def dump_df(df,filename="",writer=None, sheet_name='Sheet1', subset=None,sort=Fa
         raise Exception("invalid options. Please check the options to dump_file")
     return
 
+# def read_dataframe(input_file,sheet_name="Sheet1"):
+#     if filename and isinstance(filename,str):
+#         if filename.endswith("csv"):
+#             df = df.to_csv(filename,index=False)
+#         elif filename.endswith(".xlsx"):
+#             df = df.to_excel(filename,sheet_name=sheet_name,index=False)
+#     else:
+#         raise Exception(f"{input_file} Invalid file formate")
+#     return df
