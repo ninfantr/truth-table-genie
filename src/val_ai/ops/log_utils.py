@@ -1,10 +1,18 @@
+import sys
 import logging
 import textwrap
 
-logging.basicConfig(level=logging.DEBUG,
+DEBUG_FILE = 'debug_ttg.log'
+sys.stdout = open(DEBUG_FILE, 'a')
+sys.stderr = open(DEBUG_FILE, 'a')
+
+# file_handler = logging.FileHandler(filename='debug_ttg.log')
+# stdout_handler = logging.StreamHandler(stream=sys.stdout)
+# handlers = [file_handler, stdout_handler]
+
+logging.basicConfig(level=logging.DEBUG, stream = sys.stdout,
                     format='[%(levelname)-8s] %(module)s->%(funcName)s:%(lineno)d :: %(message)s',
-                    # handlers=[logging.FileHandler("my_log.log", mode='w'),
-                    #           logging.StreamHandler()]
+                    # handlers= handlers
                     )
 logger = logging.getLogger("ttg")
 

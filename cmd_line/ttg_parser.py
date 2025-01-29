@@ -5,11 +5,12 @@ import argparse, traceback
 
 # PLATFORM CHECKS
 if platform.platform().startswith("Linux"):
-    print(f"Running in {platform.platform()}...")
-    print(f"Configuring for EC_Linux ...")
+    # print(f"Running in {platform.platform()}...")
+    # print(f"Configuring for EC_Linux ...")
     import UsrIntel.R1    
 elif platform.platform().startswith("Windows"):
-    print(f"Running in {platform.platform()} ...")
+    #print(f"Running in {platform.platform()} ...")
+    pass
 else:
     raise Exception(f"[ERROR] : tool is not supported in {platform.platform()}")
 
@@ -23,26 +24,32 @@ warnings.filterwarnings('ignore')
 
 DEBUG_FILE = "debug_ttg.log"
 
+
+available_models = ["decision_tree","neural_network","random_forest"]
+
+parser = argparse.ArgumentParser(prog='TTG', description='Process logic truth table and extracts insightful information from it using AI/ML', epilog="Let's get started")
+parser.add_argument('-i', '--input', help='input filepath (supports xlsx, xls, csv)')
+parser.add_argument('-s', '--sheet', help='input sheetname in case of xlsx/xls. Default: Sheet1',default="Sheet1")
+parser.add_argument('-o', '--output', help='output directory. Default: output',default="output")
+#stages
+parser.add_argument('-model', help='select ML/DL model. Default: decision_tree . Available Options: '+ ",".join(available_models) , choices=available_models, default="decision_tree")
+parser.add_argument('-elaborate', help='Perform only elab to expand the dont care condition. Default: False (analysis stage does elab explicitly)',action='store_true',default=False)
+parser.add_argument('-analysis',  help='Perform complete analysis of Truth Table. Default: True',action='store_true',default=True)
+parser.add_argument('-sort_x',    help='Sorted output along rows. Easy for comparsion. Default: True',action='store_true',default=False)
+parser.add_argument('-sort_y',    help='Sorted output along columns Easy for comparsion. Default: True',action='store_true',default=False)
+#parser.add_argument('-template', help='Generate template of n dimension',type=int,default=0)
+
+args = parser.parse_args()
+
+
 from val_ai import ttg
 
+ttg.txt_banner(f" EXECUTION RUN {time.strftime('%Y-%m-%d %H:%M:%S')} ",symbol="=")
+ttg.logger.info(f"Running in {platform.platform()}...")
 ttg.logger.info("ttg module imported\n")
 
 if __name__ == "__main__":
-    available_models = ["decision_tree","neural_network","random_forest"]
-
-    parser = argparse.ArgumentParser(prog='TTG')
-    parser.add_argument('-i', '--input', help='input filepath')
-    parser.add_argument('-s', '--sheet', help='input sheetname',default="Sheet1")
-    parser.add_argument('-o', '--output', help='output directory',default="output")
-    parser.add_argument('-m', '--model', help='select ML/DL model. Options: '+ ",".join(available_models) , choices=available_models, default="decision_tree")
-    #stages
-    parser.add_argument('-elaborate', help='Perform only elab to expand the dont care condition',action='store_true',default=False)
-    parser.add_argument('-analysis', help='Perform complete analysis of Truth Table',action='store_true',default=True)
-    parser.add_argument('-sort_x', help='Sorted output xlsx, csv. Easy for comparsion',action='store_true',default=False)
-    parser.add_argument('-sort_y', help='Sorted output xlsx, csv. Easy for comparsion',action='store_true',default=False)
-    #parser.add_argument('-template', help='Generate template of n dimension',type=int,default=0)
-
-    args = parser.parse_args()
+    
 
     #args.model = "decision_tree"
 
@@ -61,14 +68,8 @@ if __name__ == "__main__":
     args.sort = ( args.sort_x , args.sort_y )
     
     error_occured = False
-    redirect_stdout = True
-    #redirecting logs to debug.log
-    if redirect_stdout:
-        sys.stdout = open(DEBUG_FILE, 'a')
-        sys.stderr = open(DEBUG_FILE, 'a')
-    try:
         
-        ttg.txt_banner(f" EXECUTION RUN {time.strftime('%Y-%m-%d %H:%M:%S')} ",symbol="=")
+    try:
         
         ttg.logger.info(f"Resolved Arguments: {args}")
         
@@ -85,6 +86,9 @@ if __name__ == "__main__":
 
         if args.analysis:
             ttg.analysis_elab(args.input,sheet_name=args.sheet,output_dir=args.output,do_predict_misses=True,do_elab=True,model = args.model,sort=args.sort)
+        
+        ttg.logger.info(f"[DONE] : {args.output}/ is generated")
+        ttg.logger.info(f"COMPLETED")
 
     except Exception as e:
         print(traceback.format_exc())
@@ -94,7 +98,7 @@ if __name__ == "__main__":
     #Restoring the stdout, stderr
     sys.stdout = sys.__stdout__
     sys.stderr = sys.__stderr__
-    
+
     if error_occured:
         print(f"\n[ERROR] : Something went wrong. Please check {DEBUG_FILE}")
         exit(15)
