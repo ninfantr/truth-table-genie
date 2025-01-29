@@ -27,14 +27,14 @@ DEBUG_FILE = "debug_ttg.log"
 
 available_models = ["decision_tree","neural_network","random_forest"]
 
-parser = argparse.ArgumentParser(prog='TTG', description='Process logic truth table and extracts insightful information from it using AI/ML', epilog="Let's get started")
+parser = argparse.ArgumentParser(prog='TTG_PARSER', description='Process logic truth table and extracts insightful information from it using AI/ML', epilog="Let's get started")
 parser.add_argument('-i', '--input', help='input filepath (supports xlsx, xls, csv)')
 parser.add_argument('-s', '--sheet', help='input sheetname in case of xlsx/xls. Default: Sheet1',default="Sheet1")
 parser.add_argument('-o', '--output', help='output directory. Default: output',default="output")
 #stages
 parser.add_argument('-model', help='select ML/DL model. Default: decision_tree . Available Options: '+ ",".join(available_models) , choices=available_models, default="decision_tree")
 parser.add_argument('-elaborate', help='Perform only elab to expand the dont care condition. Default: False (analysis stage does elab explicitly)',action='store_true',default=False)
-parser.add_argument('-analysis',  help='Perform complete analysis of Truth Table. Default: True',action='store_true',default=True)
+#parser.add_argument('-analysis',  help='Perform complete analysis of Truth Table. Default: True',action='store_true',default=True)
 parser.add_argument('-sort_x',    help='Sorted output along rows. Easy for comparsion. Default: True',action='store_true',default=False)
 parser.add_argument('-sort_y',    help='Sorted output along columns Easy for comparsion. Default: True',action='store_true',default=False)
 #parser.add_argument('-template', help='Generate template of n dimension',type=int,default=0)
@@ -53,19 +53,20 @@ if __name__ == "__main__":
 
     #args.model = "decision_tree"
 
-    if args.output == "output":
+    if os.path.exists(args.output) :
         output_dir = args.output
         i = 1
         while True:
             if os.path.exists(output_dir):
                 #print(f"searching.......{i}")
-                output_dir = f"output_{i}"
+                output_dir = f"{output_dir}_{i}"
                 i +=1
             else:
                 break
         args.output = output_dir
 
     args.sort = ( args.sort_x , args.sort_y )
+    args.analysis = True
     
     error_occured = False
         
@@ -83,6 +84,7 @@ if __name__ == "__main__":
 
         if args.elaborate:
             ttg.elaborate(args.input,sheet_name=args.sheet,output_dir=args.output,sort=args.sort)
+            return
 
         if args.analysis:
             ttg.analysis_elab(args.input,sheet_name=args.sheet,output_dir=args.output,do_predict_misses=True,do_elab=True,model = args.model,sort=args.sort)
