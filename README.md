@@ -44,19 +44,22 @@ AI/ML
 optional arguments:
   -h, --help            show this help message and exit
   -i INPUT, --input INPUT
-                        input filepath
+                        input filepath (supports xlsx, xls, csv)
   -s SHEET, --sheet SHEET
-                        input sheetname. Default: Sheet1
+                        input sheetname in case of xlsx/xls. Default: Sheet1
   -o OUTPUT, --output OUTPUT
                         output directory. Default: output
   -model {decision_tree,neural_network,random_forest}
                         select ML/DL model. Default: decision_tree . Available
                         Options: decision_tree,neural_network,random_forest
   -elaborate            Perform only elab to expand the dont care condition
-  -analysis             Perform complete analysis of Truth Table. Default:
-                        True
-  -sort_x               Sorted output along rows. Easy for comparsion
-  -sort_y               Sorted output along columns Easy for comparsion
+                        Default: True
+  -analysis             Perform complete analysis of Truth Table. 
+                        Default: True
+  -sort_x               Sorted output along rows. Easy for comparsion.
+                        Default: False
+  -sort_y               Sorted output along columns Easy for comparsion.
+                        Default: False
 
 Let's get started
 ```
