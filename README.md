@@ -4,12 +4,11 @@ VAL_AI is a python package developed to employ the AI in the Digital Logical des
 The VAL_AI supports following modules:
 
 1. **TTG - truth table genie** - operates on logic truth table which are represented in structural format (xlsx/xls/csv) and extracts insightful information from it.
-
-- Handles dont care condition in the truth table and resolve them. (Represented as 'X') 
-- Elaborate the truth table combination and identifies the duplicates & misses (duplicates - same logic values but overlapping output , misses - undefined logic values )
-- Trains AI/ML models on the valid combination
-- Provides user suggestion for the missing combination in truth table
-- Provide model explaniability in form of graphical representation and assist in the user decision
+ - Handles dont care condition in the truth table and resolve them. (Represented as 'X') 
+ - Elaborate the truth table combination and identifies the duplicates & misses (duplicates - same logic values but overlapping output , misses - undefined logic values )
+ - Trains AI/ML models on the valid combination
+ - Provides user suggestion for the missing combination in truth table
+ - Provide model explaniability in form of graphical representation and assist in the user decision
 
 # Installation
 
@@ -44,7 +43,7 @@ To generate a template of csv. Use this command **python cmd_line/generate_templ
 ```
 python cmd_line/ttg_parser.py 
 
-usage: TTG [-h] [-i INPUT] [-s SHEET] [-o OUTPUT]
+usage: TTG_PARSER [-h] [-i INPUT] [-s SHEET] [-o OUTPUT]
            [-model {decision_tree,neural_network,random_forest}] [-elaborate]
            [-analysis] [-sort_x] [-sort_y]
 
@@ -81,7 +80,7 @@ Let's get started
 4. The cell must contains 1,0,X as valid input. Support for enum type will be provided in future
 5. The tool suggests the decision based on the given valid combination which are not duplicates.
 6. The output files are not sorted by default. Use need to provide -sort_x / -sort_y to do sorting
-7. Default output files are stored in **output** folder and if folder exists, output_<id> is created based on the available. Output folder path can be overridden by user in cmdline
+7. Default output files are stored in **output** folder and if folder exists, output_\* is created based on the available. Output folder path can be overridden by user in cmdline
 8. Debug_ttg.log is generated from where the tool is executed for debug purpose. Run the tool from write-disk permission folder
 9. In case of large number of column/ features, run -elaborate separately then provide the generated **_elab.csv**  to the tool analysis to save time
 10. Decision tree model is selected as default model to predict, select -model to select other model. Note: support for other model are limited for time being
@@ -124,6 +123,6 @@ Let's get started
 3. Support for enumeration based logic truth table is limited
 
 # Support:
-Contact navin.infant.raj@intel.com for developing support
-
+ * navin.infant.raj@intel.com
+ * puneet.a.s.v@intel.com
 
