@@ -23,13 +23,13 @@ DEBUG_FILE = "debug_ttg.log"
 
 if __name__ =="__main__":
     parser = argparse.ArgumentParser(prog='TTG Template generation')
-    parser.add_argument('-template', help='Generate template for n dimension. Default: 5',type=int,default=5)
+    parser.add_argument('-n', help='Generate template for n dimension. Default: 5',type=int,default=5)
     parser.add_argument('-o', '--output', help='output directory',default="output")
 
     args = parser.parse_args()
 
     if args.template:
-        col_names = [f"COL_{x}" for x in range(args.template)]
+        col_names = [f"COL_{x}" for x in range(args.n)]
         ttg.generate_all_combination(col_names,output_file=f"{args.output}/template.csv",extra_cols=["OUT"])
         exit(0)
 
