@@ -27,8 +27,18 @@ python -m pip install -r requirements.txt
 No need to install. Run with python3.6.3a
 ```
 
-# Getting Started
+# Example
 
+To execute the tool
+
+```
+ python cmd_line/ttg_parser.py -i examples/sample.csv
+```
+
+To generate a template of csv. Use this command **python cmd_line/generate_template.py -n 10** 
+
+
+# Getting Started
 
 ## Usage
 ```
