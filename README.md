@@ -18,13 +18,19 @@ The VAL_AI supports following modules:
 
 ## Windows 
 1. Install python modules dependencies
-
 ```
 python -m pip install -r requirements.txt
 ```
 
-# Usage
+## Intel EC_Linux
+```
+No need to install. Run with python3.6.3a
+```
 
+# Getting Started
+
+
+## Usage
 ```
 python cmd_line/ttg_parser.py 
 
@@ -55,7 +61,8 @@ optional arguments:
 Let's get started
 ```
 
-# Output collaterals :
+
+## Output collaterals :
 1. <input_file>_**elab.csv** - Elaborated view of the given truth table after resolving the dont care conditions
 2. <input_file>_**elab_no_duplicates.csv** - Analysis view with valid combination in truth table
 3. <input_file>_**duplicates.csv** - Analysis view containing overlapping logic or duplicate in truth table
@@ -63,29 +70,28 @@ Let's get started
 5. <input_file>_**predict_on_miss.csv** - Run prediction on the missing combination with trained model
 6. <input_file>_**predict_all.csv** - Predicting
 
-## Other
+### Other
 1. **decision_tree.jpg** - Graphical representation for decision tree if model is decision tree
 2. **model_decision_tree**_<col_name>.pkl - saved model state
 3. **report_decision_tree**_<col_name>.txt - Testing report information
 4. For Random Forest/ Neural network, the graphical representation is not provided.
 
 # FAQ
-* How to open image in linux?
-```
-      display decision_tree.jpg
-```
-* How to open excel/ csv in linux?
-```
-      soffice <file_name>
- ```
-* How to see debug statement in the tool ?
-```
-debug_ttg.log is saved at execution folder. And [DONE] is displayed in case of successfull execution
-```
-* Facing long runtime?
-```
-Elaborate consume more time while expanding large number of features in the truth table. Run -elaborate stage separate first then provide its output to the tool again to save time
-```
+* **How to open image in linux?**
+:  display *decision_tree.jpg*
+
+* **How to open excel/ csv in linux?**
+: soffice *file_name*
+
+* **How to see debug statement in the tool ?**
+: debug_ttg.log is saved at execution folder. And [DONE] is displayed in case of successfull execution
+
+* **Tool is running for long time?**
+: Elaborate consume more time while expanding large number of features in the truth table. Run -elaborate stage separate first then provide its output to the tool again to save time
+
+* **Is there available template to test?**
+: sample.csv is presented in examples/ folder. Use generate_template.py to generate a excel with n dimension. Command is **python cmd_line/generate_template.py -n 10**
+
 
 # Known Bugs 
 1. Decision_tree.jpg does not open in Windows.
