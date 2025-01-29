@@ -5,11 +5,11 @@ import argparse, traceback
 
 # PLATFORM CHECKS
 if platform.platform().startswith("Linux"):
-    print(f"Running in {platform.platform()}")
-    print(f"Configuring for EC_Linux")
+    print(f"Running in {platform.platform()}...")
+    print(f"Configuring for EC_Linux ...")
     import UsrIntel.R1    
 elif platform.platform().startswith("Windows"):
-    print(f"Running in {platform.platform()}")
+    print(f"Running in {platform.platform()} ...")
 else:
     raise Exception(f"[ERROR] : tool is not supported in {platform.platform()}")
 
@@ -21,7 +21,11 @@ sys.path.append(pkg_dir)
 import warnings
 warnings.filterwarnings('ignore')
 
+DEBUG_FILE = "debug_ttg.log"
+
 from val_ai import ttg
+
+ttg.logger.info("ttg module imported\n")
 
 if __name__ == "__main__":
     available_models = ["decision_tree","neural_network","random_forest"]
@@ -40,8 +44,6 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    
-
     #args.model = "decision_tree"
 
     if args.output == "output":
@@ -59,12 +61,17 @@ if __name__ == "__main__":
     args.sort = ( args.sort_x , args.sort_y )
     
     error_occured = False
+    redirect_stdout = True
     #redirecting logs to debug.log
-    sys.stdout = open('debug_ttg.log', 'a')
-    sys.stderr = open('debug_ttg.log', 'a')
+    if redirect_stdout:
+        sys.stdout = open(DEBUG_FILE, 'a')
+        sys.stderr = open(DEBUG_FILE, 'a')
     try:
-        print("="*5 + f" EXECUTION RUN {time.strftime('%Y-%m-%d %H:%M:%S')} " + "="*5+ "\n")
-        print(f"Resolved Arguments: {args}")
+        
+        ttg.txt_banner(f" EXECUTION RUN {time.strftime('%Y-%m-%d %H:%M:%S')} ",symbol="=")
+        
+        ttg.logger.info(f"Resolved Arguments: {args}")
+        
         # if args.template:
         #     col_names = [f"COL_{x}" for x in range(args.template)]
         #     ttg.generate_all_combination(col_names,output_file=f"{args.output}/template.xlsx",extra_cols=["OUT"])
@@ -87,12 +94,11 @@ if __name__ == "__main__":
     #Restoring the stdout, stderr
     sys.stdout = sys.__stdout__
     sys.stderr = sys.__stderr__
-
+    
     if error_occured:
-        print("\n[ERROR] : Something went wrong. Please check debug.log")
+        print(f"\n[ERROR] : Something went wrong. Please check {DEBUG_FILE}")
         exit(15)
     else:
         print(f"\n[DONE] : {args.output}/ is generated")
+        print(f"COMPLETED")
         exit(0)
-    
-    print(sys.stderr)

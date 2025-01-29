@@ -6,6 +6,7 @@ import time
 
 
 from val_ai.ops.df_utils import *
+from val_ai.ops.log_utils import *
 from val_ai.models.classifier import *
 from val_ai.models.explainability import *
 
@@ -40,24 +41,28 @@ def generate_out_filename(input_file,  output_dir="out",output_file=None, tag=No
     return output_file
 
 def elaborate(input_file, sheet_name="Sheet1", output_dir="output",output_file =None, support_enum=False,sort=False):
+    txt_banner("ELABORATE")
     output_file = generate_out_filename(input_file,tag="elab",output_dir=output_dir,output_file=output_file,extension="csv")
-    df = pd.read_excel(input_file, sheet_name=sheet_name)
+    df = read_df(input_file, sheet_name=sheet_name)
     edit_df = df.copy()
     #populate dont care variables
     edit_df = fillX(edit_df,support_enum=support_enum)
     if output_file:
         dump_df(edit_df,filename=output_file,sort=sort)
-        print(f"elaborate - {output_file} written succesfully")
+        logger.info(f"{output_file} written succesfully")  
     return edit_df
 
 def analysis_elab(input_file,sheet_name="Sheet1", model="decision_tree", output_dir="output", output_file=None, col=None, subset=None,do_predict_misses=False,support_enum=False,do_elab=True,sort=False):
+    txt_banner("ANALYSIS")
     if do_elab:
+        logger.info(f"Running Elaborate on {input_file}")
         elab_df = elaborate(input_file,sheet_name=sheet_name,output_dir=output_dir, support_enum=support_enum,sort=sort)
     else:
-        elab_df = pd.read_excel(input_file, sheet_name=sheet_name)
+        logger.info(f"loading {input_file}")
+        elab_df = read_df(input_file, sheet_name=sheet_name)
     output_file = generate_out_filename(input_file,tag="analysis",output_dir=output_dir,output_file=output_file)
 
-    writer = pd.ExcelWriter(output_file, engine='xlsxwriter')
+    #writer = pd.ExcelWriter(output_file, engine='xlsxwriter')
     #elab_df.to_excel(writer,sheet_name="elab",index=False)
 
     #df sort
@@ -73,7 +78,7 @@ def analysis_elab(input_file,sheet_name="Sheet1", model="decision_tree", output_
     calculate_logic_index(df)
     df = df.sort_values(by=['_logic_index'])
 
-    print("analysis_elab - finding DUPLICATES")
+    logger.info("Finding DUPLICATES...")
     #DUPLICATES
     #df['_logic_dup'] = df.duplicated(subset=features, keep=False )
     #df['_logic_dup'] = df.duplicated(keep=False)
@@ -87,10 +92,11 @@ def analysis_elab(input_file,sheet_name="Sheet1", model="decision_tree", output_
     df["_logic_dup"].fillna(0,inplace=True)
     #elab_no_dup_df = elab_no_dup_df.fillna(0)
     elab_no_dup_df = df[df['_logic_dup']!=1]
-    print(elab_no_dup_df)
+    #logger.debug(f"Dataframe elab_no_duplicates = \n {elab_no_dup_df.head(5)}")
     elab_no_dup_df = elab_no_dup_df.drop(['_logic_dup','_logic_index'],axis=1)     
     #elab_no_dup_df.to_excel(writer,sheet_name="elab_no_duplicates",index=False)
-    dump_df(elab_no_dup_df,writer=writer,sheet_name="elab_no_duplicates")
+    file_elab_no_dup = generate_out_filename(input_file,tag="elab_no_duplicates",output_dir=output_dir,extension="csv")
+    dump_df(elab_no_dup_df,file_elab_no_dup,sheet_name="elab_no_duplicates")
 
 
     #MISSES
@@ -101,10 +107,9 @@ def analysis_elab(input_file,sheet_name="Sheet1", model="decision_tree", output_
             lf = len(features)
             for feature,val in zip(features,format(i,f'0{lf}b')):
                 new_row[feature] = val
-            print("analysis_elab - found MISSES", i, new_row)
+                logger.debug(f"Found MISSES  {i} {new_row}")
             df = df.append(new_row, ignore_index=True)
     df = df.sort_values(by=['_logic_index'])
-    print(df.head(10))
 
     #dup
     df["_logic_miss"].fillna(0,inplace=True)
@@ -113,29 +118,35 @@ def analysis_elab(input_file,sheet_name="Sheet1", model="decision_tree", output_
     dup_df =df.copy()
     #dup_df = dup_df.fillna(0)
     dup_df = df[df['_logic_dup']==1]
-    print(dup_df.head(10))
+    #logger.debug(f"Dataframe duplicates = \n {dup_df.head(5)}")
     dup_df = dup_df.drop(['_logic_dup','_logic_index',"_logic_miss"],axis=1)     
     #dup_df.to_excel(writer,sheet_name="duplicates",index=False)
-    dump_df(dup_df,writer=writer,sheet_name="duplicates")
+    output_file = generate_out_filename(input_file,tag="duplicates",output_dir=output_dir,extension="csv")
+    dump_df(dup_df,output_file,sheet_name="duplicates")
 
     miss_df =df.copy()
     #miss_df = miss_df.fillna(0)
     miss_df = df[df['_logic_miss']==1]
-    print(miss_df.head(10))
+    #logger.debug(f"Dataframe miss_df = \n {miss_df.head(5)}")
     miss_df = miss_df.drop(['_logic_dup','_logic_index',"_logic_miss"],axis=1)     
     #miss_df.to_excel(writer,sheet_name="miss",index=False)
-    dump_df(miss_df,writer=writer,sheet_name="miss")
-    writer.close()
-    print(f"analysis - {output_file} written succesfully")
+    output_file = generate_out_filename(input_file,tag="misses",output_dir=output_dir,extension="csv")
+    dump_df(miss_df,output_file,sheet_name="miss")
+    # if writer:
+    #     writer.close()
     
     if do_predict_misses:
         #TRAIN
         out_predict_file = generate_out_filename(input_file,tag="predict_on_miss",output_dir=output_dir, extension="csv")
-        model_path = predict_misses(output_file, output_dir=output_dir,sheet_name="elab_no_duplicates", model=model, output_file=out_predict_file,subset=subset,train_only=True)
+        txt_banner(f"TRAINING {model} MODEL")
+        model_path = predict_misses(file_elab_no_dup, output_dir=output_dir,sheet_name="elab_no_duplicates", model=model, output_file=out_predict_file,subset=subset,train_only=True)
         #MODEL EXPLAIN
         ml_model_explain(model_path,output_dir)
-        #PREDICTION
+        #PREDICT MISS
+        txt_banner("PREDICTING MISSES")
         predict_misses(output_file, sheet_name="miss", output_dir=output_dir, output_file=out_predict_file,predict_col=target, subset=subset, load_model = model_path, predict_only=True,sort=sort)
+        #PREDICT ALL
+        txt_banner("PREDICTING ALL")
         out_predict_file = generate_out_filename(input_file,tag="predict_all",output_dir=output_dir, extension="csv")    
         predict_misses(None,output_dir=output_dir, output_file=out_predict_file,subset=features,predict_col=target, load_model = model_path, predict_only=True,sort=sort)
     
@@ -145,13 +156,13 @@ def predict_misses(input_file, sheet_name="Sheet1", output_dir="output", output_
         df = generate_all_combination(subset_sorted)
         df = df[subset]
     else:
-        df = pd.read_excel(input_file, sheet_name=sheet_name)
+        df = read_df(input_file, sheet_name=sheet_name)
     
     
     Features = identify_feature_columns(df,subset)
     TargetColumn = identify_target_column(df,target=predict_col)
 
-    print(f"FEATURES = {Features}, TARGET = {TargetColumn}")
+    logger.debug(f"FEATURES = {Features}, TARGET = {TargetColumn}")
 
     #processing the stages
     process_train = True
@@ -171,10 +182,10 @@ def predict_misses(input_file, sheet_name="Sheet1", output_dir="output", output_
         train_df = df.copy()
         Targets = train_df[TargetColumn].unique()
         train_df[TargetColumn].dropna()
-        print("predict_misses - Training ....")
+        logger.info("Training ....")
         if df.shape[0] == 0:
-            print(f"predict_misses - CANNOT TRAIN. No valid combination in {input_file}.")
-            print(f"predict_misses - SKIPPING Model creation ")
+            logger.warning(f"CANNOT TRAIN. No valid combination in {input_file}.")
+            logger.warning(f"SKIPPING Model creation")
             return
         X, Y = prepare_dataset(train_df,Features = Features, col=TargetColumn)
         if train_ratio is not None:
@@ -190,14 +201,14 @@ def predict_misses(input_file, sheet_name="Sheet1", output_dir="output", output_
         report_file = os.path.join(output_dir,f"report_{model}_{TargetColumn}.txt")
         test(trained_model, X_train, Y_train, X_test, Y_test, X, Y, dump_file=report_file)
         if train_only:
-            print(f"predict_misses - {model_path} written succesfully")
+            logger.info(f"checkpoint {model_path} created")
             return model_path
     
     if process_predict:
         df[TargetColumn] = ""
         output_file = generate_out_filename(input_file, output_dir=output_dir,output_file=output_file, extension="csv")
         if df.shape[0] == 0:
-            print(f"predict_misses - no row entry {input_file}.")
-            print(f"predict_misses - SKIPPING {output_file} generation. ")
+            logger.warning(f"no row entry {input_file}.")
+            logger.warning(f"SKIPPING {output_file} generation. ")
             return
         predict(load_model, df,output_file, features= Features, col=TargetColumn,sort=sort)

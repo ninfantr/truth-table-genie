@@ -1,27 +1,14 @@
-import os,sys
-import platform
-import traceback
+#!/usr/intel/bin/python3.6.3a
+import os, sys, platform
+import time
+import argparse, traceback
 
-sys.stdout = open('debug.log', 'a')
-sys.stderr = open('debug.log', 'a')
-
-
-print(f"PLATFORM : {platform.platform()}")
-
-if platform.platform() == "Linux":
-    print("running in EC_LINUX")
-    import UsrIntel.R1
-elif platform.platform() == "Windows":
-    print("running in WINDOWS")
-
-sys.path.append("../src/")
-
-print(traceback.format_exc())
-raise Exception("CHECKING")
-
-from val_ai import *
-
-sys.stdout = sys.__stdout__
-sys.stderr = sys.__stderr__
-
-print("MODULED LOADED")
+# PLATFORM CHECKS
+if platform.platform().startswith("Linux"):
+    print(f"Running in {platform.platform()}...")
+    print(f"Configuring for EC_Linux ...")
+    import UsrIntel.R1    
+elif platform.platform().startswith("Windows"):
+    print(f"Running in {platform.platform()} ...")
+else:
+    raise Exception(f"[ERROR] : tool is not supported in {platform.platform()}")

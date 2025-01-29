@@ -23,11 +23,12 @@ from sklearn.model_selection import cross_val_score
 import pickle
 
 from val_ai.ops.df_utils import *
+from val_ai.ops.log_utils import *
 
 def prepare_dataset(df,Features, col ):
-    print(f"Columns = {df.dtypes}")
-    print(f"FEATURES = {Features}")
-    print(f"TARGETS = {df[col].unique()}")
+    #logger.info(f"Columns = {df.dtypes}")
+    logger.info(f"FEATURES = {Features}")
+    logger.info(f"TARGETS = {df[col].unique()}")
     Features = sorted(Features)
     X = df[Features]
     Y = df[[col]]
@@ -53,7 +54,8 @@ def train(X_train,Y_train, feature_names, target_names, model_path, model_name="
 def test(model, X_train, Y_train, X_test, Y_test, X, Y,dump_file=None):
     Targets = list(model.classes_)
     doc_lines = []
-    doc_lines.append("*"*5 +  "TESTING REPORT" +"*"*5)
+    doc_lines.append("\n")
+    doc_lines.append(txt_banner("TESTING REPORT",display=False))
     doc_lines.append(f"TRAINING SCORE = {model.score(X_train,Y_train)}")
     doc_lines.append(f"TESTING SCORE =  {model.score(X_test,Y_test)}")
     #doc_lines.append("CROSS VALIDATION (3 FOLD) = ", cross_val_score(model, X , Y,cv=2))
@@ -69,7 +71,9 @@ def test(model, X_train, Y_train, X_test, Y_test, X, Y,dump_file=None):
     report = classification_report(Y, Y_pred, target_names=Targets)
     doc_lines.append("\nCLASSIFICATION REPORT ON COMPLETE DATASET")
     doc_lines.append(report)
-    print("\n".join(doc_lines))
+    doc_lines.append("\n")
+    
+    logger.debug("\n".join(doc_lines))
     if dump_file:
         f = open(dump_file,"w")
         for line in doc_lines:
@@ -166,4 +170,3 @@ def predict(model_path, df,out_file, features, col,sort=False ) :
     # out_df['RESULTS'] = np.where((out_df[col] == out_df[f'Predicted {col}']), True, False)
 
     dump_df(out_df,out_file,sort=sort)
-    print(f"predict - {out_file} predicted.")

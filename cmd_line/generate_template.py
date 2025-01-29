@@ -19,6 +19,8 @@ sys.path.append(pkg_dir)
 
 from val_ai import ttg
 
+DEBUG_FILE = "debug_ttg.log"
+
 if __name__ =="__main__":
     parser = argparse.ArgumentParser(prog='TTG Template generation')
     parser.add_argument('-template', help='Generate template for n dimension. Default: 5',type=int,default=5)
