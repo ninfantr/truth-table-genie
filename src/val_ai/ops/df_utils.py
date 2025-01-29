@@ -1,6 +1,7 @@
 import argparse
 import pandas as pd
 import numpy as np
+import os,sys
 
 import itertools
 
@@ -78,7 +79,7 @@ def generate_all_combination(Features, dict_valid_values=None,output_file=None,e
             df[col] = ""
     
     if output_file:
-        df.to_excel(output_file,index=False)
+        dump_df(df,output_file)
     return df
 
 # for test_name,flag_scheme in test_flag_scheme.items():
@@ -140,6 +141,10 @@ def calculate_logic_index(df,subset=None, support_enum=False,sort=False):
     return df['_logic_index']
 
 def dump_df(df,filename="",writer=None, sheet_name='Sheet1', subset=None,sort=False):
+    if filename:
+        folder = os.path.dirname(filename)
+        if folder:
+            os.makedirs(folder,exist_ok=True)
     #sorting file
     if sort:
         sorted_df = df.copy()

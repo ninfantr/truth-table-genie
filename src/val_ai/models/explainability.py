@@ -17,18 +17,22 @@ def ml_model_explain(model_path,output_dir,convert_pdf=False):
     if model_name == "decision_tree":
         print(f"model_explain - {vars(model)}")
         output_file=f"{output_dir}/{model_name}.jpg"
-        dot_data = tree.export_graphviz(model, out_file=output_file, 
+        dot_data = tree.export_graphviz(model,
+                        out_file = output_file,
                         feature_names=model.feature_names,  
                         class_names=model.classes_,  
                         filled=True, rounded=True,  
                         special_characters=True)
-        graph = graphviz.Source(dot_data) 
+        graph = graphviz.Source(dot_data)
+        # graph.format = "png"
+        # graph.render(output_file)
         print(f"model_explain - rendered {output_file}")
         if convert_pdf:
-            jpg_file = output_file
+            image_file = output_file
             pdf_file = output_file.replace(".jpg",".pdf")
-            os.system(f"convert {jpg_file} -auto-orient {pdf_file}")
+            os.system(f"convert {image_file} -auto-orient {pdf_file}")
             print(f"model_explain - convert {pdf_file}")
+        
     elif model_name == "neural_network":
         #TODO: generate image for neural network
         pass

@@ -125,7 +125,7 @@ def analysis_elab(input_file,sheet_name="Sheet1", model="decision_tree", output_
     miss_df = miss_df.drop(['_logic_dup','_logic_index',"_logic_miss"],axis=1)     
     #miss_df.to_excel(writer,sheet_name="miss",index=False)
     dump_df(miss_df,writer=writer,sheet_name="miss")
-    writer.save()
+    writer.close()
     print(f"analysis - {output_file} written succesfully")
     
     if do_predict_misses:
