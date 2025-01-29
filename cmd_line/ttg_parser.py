@@ -84,7 +84,7 @@ if __name__ == "__main__":
 
         if args.elaborate:
             ttg.elaborate(args.input,sheet_name=args.sheet,output_dir=args.output,sort=args.sort)
-            return
+            exit(0)
 
         if args.analysis:
             ttg.analysis_elab(args.input,sheet_name=args.sheet,output_dir=args.output,do_predict_misses=True,do_elab=True,model = args.model,sort=args.sort)
