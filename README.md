@@ -93,7 +93,7 @@ Let's get started
 3. <input_file>_**duplicates.csv** - Analysis view containing overlapping logic or duplicate in truth table
 4. <input_file>_**misses.csv** - Analysis view identifying the missing combination in the truth table
 5. <input_file>_**predict_on_miss.csv** - Run prediction on the missing combination with trained model
-6. <input_file>_**predict_all.csv** - Predicting
+6. <input_file>_**predict_all.csv** - Predicting all combination of input columns using the AI/ML model
 
 ### Other
 1. **decision_tree.jpg** - Graphical representation for decision tree if model is decision tree
