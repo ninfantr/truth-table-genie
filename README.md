@@ -70,18 +70,20 @@ Let's get started
 4. For Random Forest/ Neural network, the graphical representation is not provided.
 
 # FAQ
-1. How to open image in linux?
+* How to open image in linux?
 ```
       display decision_tree.jpg
 ```
-2. How to open excel/ csv in linux?
+* How to open excel/ csv in linux?
 ```
       soffice <file_name>
  ```
-3. How to see debug statement in the tool ?
+* How to see debug statement in the tool ?
+
 debug_ttg.log is saved at execution folder. And [DONE] is displayed in case of successfull execution
 
-4. Facing long runtime?
+* Facing long runtime?
+
 Elaborate consume more time while expanding large number of features in the truth table. Run -elaborate stage separate first then provide its output to the tool again to save time
 
 # Known Bugs 
