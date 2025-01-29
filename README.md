@@ -79,12 +79,13 @@ Let's get started
       soffice <file_name>
  ```
 * How to see debug statement in the tool ?
-
+```
 debug_ttg.log is saved at execution folder. And [DONE] is displayed in case of successfull execution
-
+```
 * Facing long runtime?
-
+```
 Elaborate consume more time while expanding large number of features in the truth table. Run -elaborate stage separate first then provide its output to the tool again to save time
+```
 
 # Known Bugs 
 1. Decision_tree.jpg does not open in Windows.
