@@ -71,11 +71,18 @@ Let's get started
 
 # FAQ
 1. How to open image in linux?
-  ``` display decision_tree.jpg
-  ```
+```
+      display decision_tree.jpg
+```
 2. How to open excel/ csv in linux?
-  ``` soffice <file_name>
-  ```
+```
+      soffice <file_name>
+ ```
+3. How to see debug statement in the tool ?
+debug_ttg.log is saved at execution folder. And [DONE] is displayed in case of successfull execution
+
+4. Facing long runtime?
+Elaborate consume more time while expanding large number of features in the truth table. Run -elaborate stage separate first then provide its output to the tool again to save time
 
 # Known Bugs 
 1. Decision_tree.jpg does not open in Windows.
