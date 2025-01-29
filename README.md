@@ -63,7 +63,7 @@ optional arguments:
                         select ML/DL model. Default: decision_tree . Available
                         Options: decision_tree,neural_network,random_forest
   -elaborate            Perform only elab to expand the dont care condition
-                        Default: True
+                        Default: False (analysis run elab explictly)
   -analysis             Perform complete analysis of Truth Table. 
                         Default: True
   -sort_x               Sorted output along rows. Easy for comparsion.
