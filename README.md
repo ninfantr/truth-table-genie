@@ -85,7 +85,7 @@ Let's get started
 8. Debug_ttg.log is generated from where the tool is executed for debug purpose. Run the tool from write-disk permission folder
 9. In case of large number of column/ features, run -elaborate separately then provide the generated **_elab.csv**  to the tool analysis to save time
 10. Decision tree model is selected as default model to predict, select -model to select other model. Note: support for other model are limited for time being
-11. The val_ai is  also available as python module and need to be installed where as **ttg_parser.py** works as standalone . Note: use from *val_ai import ttg* to use as python library
+11. The val_ai is  also available as python module and need to be installed where as **ttg_parser.py** works as standalone . Note: use from **val_ai import ttg** to use as python library
 
 ## Output collaterals :
 1. <input_file>_**elab.csv** - Elaborated view of the given truth table after resolving the dont care conditions
