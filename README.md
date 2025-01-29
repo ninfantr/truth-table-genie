@@ -73,7 +73,18 @@ optional arguments:
 
 Let's get started
 ```
+# Considerations
 
+1. Input Files supports xlsx/csv/xls
+2. cmd_line/ttg_parser.py can be ran at any place
+3. The last column is considered as OUTPUT to predict based on other input columns
+4. The cell must contains 1,0,X as valid input. Support for enum type will be provided in future
+5. The tool suggests the decision based on the given valid combination which are not duplicates.
+6. The output files are not sorted by default. Use need to provide -sort_x / -sort_y to do sorting
+7. Default output files are stored in **output** folder and if folder exists, output_<id> is created based on the available. Output folder path can be overridden by user in cmdline
+8. Debug_ttg.log is generated from where the tool is executed for debug purpose. Run the tool from write-disk permission folder
+9. In case of large number of column/ features, run -elaborate separately then provide the generated **_elab.csv**  to the tool analysis to save time
+10. Decision tree model is selected as default model to predict, select -model to select other model. Note: support for other model are limited for time being
 
 ## Output collaterals :
 1. <input_file>_**elab.csv** - Elaborated view of the given truth table after resolving the dont care conditions
