@@ -41,11 +41,11 @@ To generate a template of csv. Use this command **python cmd_line/generate_templ
 
 ## Usage
 ```
-python cmd_line/ttg_parser.py 
+$ python cmd_line/ttg_parser.py -h
 
 usage: TTG_PARSER [-h] [-i INPUT] [-s SHEET] [-o OUTPUT]
-           [-model {decision_tree,neural_network,random_forest}] [-elaborate]
-           [-analysis] [-sort_x] [-sort_y]
+                  [-model {decision_tree,neural_network,random_forest}]
+                  [-elaborate] [-sort_x] [-sort_y]
 
 Process logic truth table and extracts insightful information from it using
 AI/ML
@@ -61,14 +61,12 @@ optional arguments:
   -model {decision_tree,neural_network,random_forest}
                         select ML/DL model. Default: decision_tree . Available
                         Options: decision_tree,neural_network,random_forest
-  -elaborate            Perform only elab to expand the dont care condition
-                        Default: False (analysis run elab explictly)
-  -analysis             Perform complete analysis of Truth Table. 
-                        Default: True
+  -elaborate            Perform only elab to expand the dont care condition.
+                        Default: False (analysis stage does elab explicitly)
   -sort_x               Sorted output along rows. Easy for comparsion.
-                        Default: False
+                        Default: True
   -sort_y               Sorted output along columns Easy for comparsion.
-                        Default: False
+                        Default: True
 
 Let's get started
 ```
@@ -81,7 +79,7 @@ Let's get started
 5. The tool suggests the decision based on the given valid combination which are not duplicates.
 6. The output files are not sorted by default. Use need to provide -sort_x / -sort_y to do sorting
 7. Default output files are stored in **output** folder and if folder exists, output_\* is created based on the available. Output folder path can be overridden by user in cmdline
-8. Debug_ttg.log is generated from where the tool is executed for debug purpose. Run the tool from write-disk permission folder
+8. Debug_ttg.log is generated in provided output folder which are used for debug purpose. Run the tool from write-disk permission folder.
 9. In case of large number of column/ features, run -elaborate separately then provide the generated **_elab.csv**  to the tool analysis to save time
 10. Decision tree model is selected as default model to predict, select -model to select other model. Note: support for other model are limited for time being
 11. The val_ai is  also available as python module and need to be installed where as **ttg_parser.py** works as standalone . Note: use from **val_ai import ttg** to use as python library
@@ -93,6 +91,7 @@ Let's get started
 4. <input_file>_**misses.csv** - Analysis view identifying the missing combination in the truth table
 5. <input_file>_**predict_on_miss.csv** - Run prediction on the missing combination with trained model
 6. <input_file>_**predict_all.csv** - Predicting all combination of input columns using the AI/ML model
+7. debug_ttg.log - Debug prints from tool to root cause any script issue.
 
 ### Other
 1. **decision_tree.jpg** - Graphical representation for decision tree if model is decision tree
@@ -101,14 +100,14 @@ Let's get started
 4. For Random Forest/ Neural network, the graphical representation is not provided.
 
 # FAQ
-* **How to open image in linux?**
+* **What command to use to open jpg image in linux?**
 :  display *decision_tree.jpg*
 
-* **How to open excel/ csv in linux?**
+* **What command to use to open excel in linux?**
 : soffice *file_name*
 
 * **How to see debug statement in the tool ?**
-: debug_ttg.log is saved at execution folder. And [DONE] is displayed in case of successfull execution
+: debug_ttg.log is saved at execution folder. And [DONE] is displayed in case of successful execution
 
 * **Tool is running for long time?**
 : Elaborate consume more time while expanding large number of features in the truth table. Run -elaborate stage separate first then provide its output to the tool again to save time
