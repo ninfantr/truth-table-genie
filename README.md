@@ -4,11 +4,11 @@ VAL_AI is a python package developed to employ the AI in the Digital Logical des
 The VAL_AI supports following modules:
 
 1. **TTG - truth table genie** - operates on logic truth table which are represented in structural format (xlsx/xls/csv) and extracts insightful information from it.
- - Handles dont care condition in the truth table and resolve them. (Represented as 'X') 
- - Elaborate the truth table combination and identifies the duplicates & misses (duplicates - same logic values but overlapping output , misses - undefined logic values )
- - Trains AI/ML models on the valid combination
- - Provides user suggestion for the missing combination in truth table
- - Provide model explaniability in form of graphical representation and assist in the user decision
+    - Handles dont care condition in the truth table and resolve them. (Represented as 'X') 
+    - Elaborate the truth table combination and identifies the duplicates & misses (duplicates - same logic values but overlapping output , misses - undefined logic values )
+    - Trains AI/ML models on the valid combination
+    - Provides user suggestion for the missing combination in truth table
+    - Provide model explaniability in form of graphical representation and assist in the user decision
 
 # Installation
 
@@ -80,18 +80,21 @@ Let's get started
 6. The output files are not sorted by default. Use need to provide -sort_x / -sort_y to do sorting
 7. Default output files are stored in **output** folder and if folder exists, output_\* is created based on the available. Output folder path can be overridden by user in cmdline
 8. Debug_ttg.log is generated in provided output folder which are used for debug purpose. Run the tool from write-disk permission folder.
-9. In case of large number of column/ features, run -elaborate separately then provide the generated **_elab.csv**  to the tool analysis to save time
+9. In case of large number of column or features, Run -elaborate separately then provide the generated **_elab.csv**  to the tool analysis to save time
 10. Decision tree model is selected as default model to predict, select -model to select other model. Note: support for other model are limited for time being
-11. The val_ai is  also available as python module and need to be installed where as **ttg_parser.py** works as standalone . Note: use from **val_ai import ttg** to use as python library
+11. The val_ai is  also available as python module and need to be installed where as **ttg_parser.py** works as standalone . 
+    - Note: "from **val_ai import ttg**" to import as python library. 
+    - Note: If envirnomental variable TTG_DEBUG_FILE is set, all debug messages are redirected to that file path.
 
 ## Output collaterals :
-1. <input_file>_**elab.csv** - Elaborated view of the given truth table after resolving the dont care conditions
-2. <input_file>_**elab_no_duplicates.csv** - Analysis view with valid combination in truth table
-3. <input_file>_**duplicates.csv** - Analysis view containing overlapping logic or duplicate in truth table
-4. <input_file>_**misses.csv** - Analysis view identifying the missing combination in the truth table
-5. <input_file>_**predict_on_miss.csv** - Run prediction on the missing combination with trained model
-6. <input_file>_**predict_all.csv** - Predicting all combination of input columns using the AI/ML model
-7. debug_ttg.log - Debug prints from tool to root cause any script issue.
+1. \<input_file\>_**elab.csv** - Elaborated view of the given truth table after resolving the dont care conditions
+2. \<input_file\>_**elab_no_duplicates.csv** - Analysis view with valid combination in truth table
+3. \<input_file\>_**duplicates.csv** - Analysis view containing overlapping logic or duplicate in truth table
+4. \<input_file\>_**misses.csv** - Analysis view identifying the missing combination in the truth table. 
+5. **predict_**\<input_file\>_**on_miss.csv** - Run prediction on the missing combination with trained model. In case of no misses, this file is not generated
+6. **predict_**\<input_file\>_**on_duplicates.csv** - Run prediction on the duplicate combination with trained model. In case of no misses, this file is not generated
+6. **predict_**\<input_file\>_**all.csv** - Predicting all combination of input columns using the AI/ML model
+7. **debug_ttg.log** - Debug prints from tool to root cause any script issue.
 
 ### Other
 1. **decision_tree.jpg** - Graphical representation for decision tree if model is decision tree
