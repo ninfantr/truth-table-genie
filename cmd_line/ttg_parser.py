@@ -22,11 +22,12 @@ sys.path.append(pkg_dir)
 import warnings
 warnings.filterwarnings('ignore')
 
-DEBUG_FILE = "debug_ttg.log"
+class StageSkip(Exception):
+    pass
 
+#CMDLINE PARSER
 
 available_models = ["decision_tree","neural_network","random_forest"]
-
 parser = argparse.ArgumentParser(prog='TTG_PARSER', description='Process logic truth table and extracts insightful information from it using AI/ML', epilog="Let's get started")
 parser.add_argument('-i', '--input', help='input filepath (supports xlsx, xls, csv)')
 parser.add_argument('-s', '--sheet', help='input sheetname in case of xlsx/xls. Default: Sheet1',default="Sheet1")
@@ -41,37 +42,38 @@ parser.add_argument('-sort_y',    help='Sorted output along columns Easy for com
 
 args = parser.parse_args()
 
+if os.path.exists(args.output) :
+    base_output_name = args.output
+    output_dir = base_output_name
+    i = 1
+    while True:
+        if os.path.exists(output_dir):
+            #print(f"searching.......{i}")
+            output_dir = f"{base_output_name}_{i}"
+            i +=1
+        else:
+            break
+    args.output = output_dir
 
+os.makedirs(args.output,exist_ok=False)    
+os.environ["TTG_DEBUG_FILE"] = os.path.join(args.output,"debug_ttg.log")
+
+args.sort = ( args.sort_x , args.sort_y )
+args.analysis = True
+
+#FROM IMPORT
 from val_ai import ttg
 
-ttg.txt_banner(f" EXECUTION RUN {time.strftime('%Y-%m-%d %H:%M:%S')} ",symbol="=")
-ttg.logger.info(f"Running in {platform.platform()}...")
-ttg.logger.info("ttg module imported\n")
+_tool_name_ = "TTG"
 
 if __name__ == "__main__":
-    
-
-    #args.model = "decision_tree"
-
-    if os.path.exists(args.output) :
-        output_dir = args.output
-        i = 1
-        while True:
-            if os.path.exists(output_dir):
-                #print(f"searching.......{i}")
-                output_dir = f"{output_dir}_{i}"
-                i +=1
-            else:
-                break
-        args.output = output_dir
-
-    args.sort = ( args.sort_x , args.sort_y )
-    args.analysis = True
-    
-    error_occured = False
-        
+    error_msg = ""
+    profile = ttg.TaskProfiler(_tool_name_)        
+    # MAIN PROCESS
     try:
-        
+        ttg.txt_banner(f" EXECUTION RUN {time.strftime('%Y-%m-%d %H:%M:%S')} ",symbol="=")
+        ttg.logger.info(f"Running in {platform.platform()}...")
+        ttg.logger.info("ttg module imported\n")
         ttg.logger.info(f"Resolved Arguments: {args}")
         
         # if args.template:
@@ -83,28 +85,32 @@ if __name__ == "__main__":
             raise Exception(f"Please provide input xlsx path using -i or --input option.")
 
         if args.elaborate:
+            # ttg.log_restore()
             ttg.elaborate(args.input,sheet_name=args.sheet,output_dir=args.output,sort=args.sort)
-            exit(0)
+            raise StageSkip(f"[STATUS]: Elaboration COMPLETED")
 
         if args.analysis:
             ttg.analysis_elab(args.input,sheet_name=args.sheet,output_dir=args.output,do_predict_misses=True,do_elab=True,model = args.model,sort=args.sort)
         
         ttg.logger.info(f"[DONE] : {args.output}/ is generated")
         ttg.logger.info(f"COMPLETED")
-
+    
+    except StageSkip as t:
+        ttg.log_restore()
+        print(t)
+        pass
     except Exception as e:
         print(traceback.format_exc())
-        print(e)    
-        error_occured = True
+        print(e)
+        error_msg = e
 
-    #Restoring the stdout, stderr
-    sys.stdout = sys.__stdout__
-    sys.stderr = sys.__stderr__
+    ttg.log_restore()
+    print(f"[STATUS]: Executed in {profile.get_exec_time()} sec")
 
-    if error_occured:
-        print(f"\n[ERROR] : Something went wrong. Please check {DEBUG_FILE}")
+    if error_msg:
+        print(f"[ERROR] : Something went wrong. Please check {ttg.DEBUG_FILE}")    
         exit(15)
     else:
-        print(f"\n[DONE] : {args.output}/ is generated")
+        print(f"[DONE] : {args.output}/ is generated")
         print(f"COMPLETED")
         exit(0)
