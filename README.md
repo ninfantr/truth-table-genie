@@ -125,6 +125,7 @@ Let's get started
 3. Support for enumeration based logic truth table is limited
 
 # Support:
- * navin.infant.raj@intel.com
  * puneet.a.s.v@intel.com
+ * navin.infant.raj@intel.com
+
 
