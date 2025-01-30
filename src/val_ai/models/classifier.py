@@ -165,6 +165,7 @@ def predict(model_path, df,out_file, features, col,sort=False ) :
         # print(txt)
 
     out_df.loc[:,col] = Y_pred
+    out_df = out_df.drop_duplicates()
     #out_df.loc[:,f"Predicted {col}"] = Y_pred
     # out_df.loc[:,f"Predicted {col} Probabilties"] = Probabilities
     # out_df['RESULTS'] = np.where((out_df[col] == out_df[f'Predicted {col}']), True, False)

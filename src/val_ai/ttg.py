@@ -121,8 +121,8 @@ def analysis_elab(input_file,sheet_name="Sheet1", model="decision_tree", output_
     #logger.debug(f"Dataframe duplicates = \n {dup_df.head(5)}")
     dup_df = dup_df.drop(['_logic_dup','_logic_index',"_logic_miss"],axis=1)     
     #dup_df.to_excel(writer,sheet_name="duplicates",index=False)
-    output_file = generate_out_filename(input_file,tag="duplicates",output_dir=output_dir,extension="csv")
-    dump_df(dup_df,output_file,sheet_name="duplicates")
+    file_dup = generate_out_filename(input_file,tag="duplicates",output_dir=output_dir,extension="csv")
+    dump_df(dup_df,file_dup,sheet_name="duplicates")
 
     miss_df =df.copy()
     #miss_df = miss_df.fillna(0)
@@ -130,25 +130,29 @@ def analysis_elab(input_file,sheet_name="Sheet1", model="decision_tree", output_
     #logger.debug(f"Dataframe miss_df = \n {miss_df.head(5)}")
     miss_df = miss_df.drop(['_logic_dup','_logic_index',"_logic_miss"],axis=1)     
     #miss_df.to_excel(writer,sheet_name="miss",index=False)
-    output_file = generate_out_filename(input_file,tag="misses",output_dir=output_dir,extension="csv")
-    dump_df(miss_df,output_file,sheet_name="miss")
+    file_miss = generate_out_filename(input_file,tag="misses",output_dir=output_dir,extension="csv")
+    dump_df(miss_df,file_miss,sheet_name="miss")
     # if writer:
     #     writer.close()
     
     if do_predict_misses:
         #TRAIN
-        out_predict_file = generate_out_filename(input_file,tag="predict_on_miss",output_dir=output_dir, extension="csv")
         txt_banner(f"TRAINING {model} MODEL")
-        model_path = predict_misses(file_elab_no_dup, output_dir=output_dir,sheet_name="elab_no_duplicates", model=model, output_file=out_predict_file,subset=subset,train_only=True)
+        model_path = predict_misses(file_elab_no_dup, output_dir=output_dir,sheet_name="elab_no_duplicates", model=model,subset=subset,train_only=True)
         #MODEL EXPLAIN
         ml_model_explain(model_path,output_dir)
+        #PREDICT DUPLICATE
+        txt_banner("PREDICTING DUPLICATES")
+        file_predict_dup = generate_out_filename(input_file,prefix="predict",tag="on_duplicates",output_dir=output_dir, extension="csv")
+        predict_misses(file_dup, sheet_name="duplicates", output_dir=output_dir, output_file=file_predict_dup,predict_col=target, subset=subset, load_model = model_path, predict_only=True,sort=sort)
         #PREDICT MISS
         txt_banner("PREDICTING MISSES")
-        predict_misses(output_file, sheet_name="miss", output_dir=output_dir, output_file=out_predict_file,predict_col=target, subset=subset, load_model = model_path, predict_only=True,sort=sort)
+        file_predict_on_miss = generate_out_filename(input_file,prefix="predict",tag="on_miss",output_dir=output_dir, extension="csv")
+        predict_misses(file_miss, sheet_name="miss", output_dir=output_dir, output_file=file_predict_on_miss,predict_col=target, subset=subset, load_model = model_path, predict_only=True,sort=sort)
         #PREDICT ALL
         txt_banner("PREDICTING ALL")
-        out_predict_file = generate_out_filename(input_file,tag="predict_all",output_dir=output_dir, extension="csv")    
-        predict_misses(None,output_dir=output_dir, output_file=out_predict_file,subset=features,predict_col=target, load_model = model_path, predict_only=True,sort=sort)
+        file_predict_all = generate_out_filename(input_file,prefix="predict",tag="all",output_dir=output_dir, extension="csv")    
+        predict_misses(None,output_dir=output_dir, output_file=file_predict_all,subset=features,predict_col=target, load_model = model_path, predict_only=True,sort=sort)
     
 def predict_misses(input_file, sheet_name="Sheet1", output_dir="output", output_file=None, output_sheet_name="Sheet1", subset=None, predict_col=None,load_model="",model="decision_tree",train_only=False, predict_only=False, train_ratio=None, sort=False):
     if input_file is None:
